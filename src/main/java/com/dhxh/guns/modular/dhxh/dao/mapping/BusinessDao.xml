@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dhxh.guns.modular.dhxh.dao.BusinessDao">
+	<select id="queryBusinessInfoList" resultType="map">
+		SELECT concat(bi.id) id,bi.business_name,bi.contact,bi.telephone,concat(a1.NAME,a2.NAME) address,bi.address_info,bi.`status`,bi.create_time
+		FROM dhxh.t_business_info bi
+		left JOIN dhxh.t_address a2 ON a2.id = bi.address_id AND a2.address_level = 2
+		LEFT JOIN dhxh.t_address a1 ON a1.id = a2.parent_id
+		where 1=1
+		<if test="business_name != null and business_name !=''">
+			bi.business_name like CONCAT('%',#{business_name},'%')
+		</if>
+		order by bi.address_info
+		<if test="offset != null and offset !='' and limit != null and limit !='' ">
+			LIMIT  ${offset},${limit}
+		</if>
+	</select>
+
+	<select id="queryBusinessInfoListNum" resultType="int">
+		SELECT count(*)
+		FROM dhxh.t_business_info bi
+		<if test="business_name != null and business_name !=''">
+			bi.business_name like CONCAT('%',#{business_name},'%')
+		</if>
+	</select>
+
+	<select id="queryMSList" resultType="map">
+		SELECT bi.business_name,bi.contact,bi.telephone,CONCAT(a5.NAME,a6.accurate_address,a6.NAME) address,bm.address_info,
+		concat(bm.id) id,bm.group_num,bm.begin_time,bm.end_time,bm.service_status,bm.create_time,
+		bo.transaction_amount
+		FROM dhxh.t_business_monthly bm
+		inner JOIN dhxh.t_business_order bo ON bo.business_id = bm.id
+		INNER JOIN dhxh.t_business_info bi ON bi.id = bm.business_id
+		left JOIN dhxh.t_address a6 ON a6.id = bm.address_id AND a6.address_level = 6
+		LEFT JOIN dhxh.t_address a5 ON a5.id = a6.parent_id
+		where 1=1
+		<if test="business_name != null and business_name !=''">
+			and bi.business_name like CONCAT('%',#{business_name},'%')
+		</if>
+		order by bm.business_id,bi.address_info
+		<if test="offset != null and offset !='' and limit != null and limit !='' ">
+			LIMIT  ${offset},${limit}
+		</if>
+	</select>
+
+	<select id="queryMSListNum" resultType="int">
+		SELECT count(*)
+		FROM dhxh.t_business_monthly bm
+		inner JOIN dhxh.t_business_order bo ON bo.business_id = bm.id
+		INNER JOIN dhxh.t_business_info bi ON bi.id = bm.business_id
+		left JOIN dhxh.t_address a6 ON a6.id = bm.address_id AND a6.address_level = 6
+		LEFT JOIN dhxh.t_address a5 ON a5.id = a6.parent_id
+		where 1=1
+		<if test="business_name != null and business_name !=''">
+			and bi.business_name like CONCAT('%',#{business_name},'%')
+		</if>
+	</select>
+
+    <select id="queryBusinessInfoById" resultType="map">
+		SELECT concat(bi.id) id,bi.business_name,bi.contact,bi.telephone,a1.id a1_id,a1.name a1_name,a2.id a2_id,a2.name a2_name,bi.address_info,bi.`status`,bi.create_time
+		FROM dhxh.t_business_info bi
+		left JOIN dhxh.t_address a2 ON a2.id = bi.address_id AND a2.address_level = 2
+		LEFT JOIN dhxh.t_address a1 ON a1.id = a2.parent_id
+		where 1=1
+		and bi.id =#{id}
+	</select>
+
+    <update id="updateBusinessInfo">
+        update dhxh.t_business_info bi
+        <set>
+            <if test="business_name != null and business_name !=''">
+                bi.business_name = #{business_name},
+            </if>
+            <if test="status != null and status !=''">
+                bi.status = #{status},
+            </if>
+            <if test="address_info != null and address_info !=''">
+                bi.address_info = #{address_info},
+            </if>
+            <if test="address_id != null and address_id !=''">
+                bi.address_id = #{address_id},
+            </if>
+            <if test="contact != null and contact !=''">
+                bi.contact = #{contact},
+            </if>
+            <if test="password != null and password !=''">
+                bi.password = #{password},
+            </if>
+            <if test="telephone != null and telephone !=''">
+                bi.telephone = #{telephone},
+            </if>
+        </set>
+        <where>
+			<if test="id != null and id !=''">
+				bi.id = #{id}
+			</if>
+		</where>
+    </update>
+
+</mapper>

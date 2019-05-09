@@ -1,0 +1,46 @@
+@layout("/common/_container.html"){
+<div class="row">
+    <div class="col-sm-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>顺丰订单管理</h5>
+            </div>
+            <div class="ibox-content">
+                <div class="row row-lg">
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <#NameCon id="user_name" name="用户姓名" />
+                                <#SelectCon id="order_status" name="运单状态" >
+                                    <option value="">全部</option>
+                                    <option value="0">预下单</option>
+                                    <option value="1">订单创建</option>
+                                    <option value="2">订单取消</option>
+                                    <option value="10">配送员确认订单</option>
+                                    <option value="12">配送员到店</option>
+                                    <option value="15">配送员配送中</option>
+                                    <option value="17">订单完成</option>
+                                </#SelectCon>
+                                <#TimeCon id="beginTime" name="开始时间" isTime="true" pattern="YYYY-MM-DD hh:mm:ss"/>
+                                <#TimeCon id="expect_time" name="期望送达时间" isTime="true" pattern="YYYY-MM-DD hh:mm:ss"/>
+                            <!--<#TimeCon id="arrive_time" name="预约上门时间" isTime="true" pattern="YYYY-MM-DD hh:mm:ss"/>-->
+                            </div>
+                            <div class="col-sm-3">
+                                <#NameCon id="user_address" name="用户地址" />
+                                <#NameCon id="user_phone" name="用户电话" />
+                                <#TimeCon id="endTime" name="结束时间" isTime="true" pattern="YYYY-MM-DD hh:mm:ss"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <#button name="搜索" icon="fa-search" clickFun="Shunfeng.search()"/>
+                                <#button name="顺丰配送下单" icon="" clickFun="Shunfeng.shunfengOrder()"/>
+                            </div>
+                        </div>
+                        <#table id="ShunfengTable"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="${ctxPath}/static/modular/dhxh/shunfeng/shunfeng.js"></script>
+@}

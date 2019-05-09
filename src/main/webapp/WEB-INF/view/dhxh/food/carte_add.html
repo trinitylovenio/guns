@@ -1,0 +1,67 @@
+@layout("/common/_container.html"){
+<div class="ibox float-e-margins">
+	<div class="ibox-content">
+		<div class="form-horizontal" id="userInfoForm">
+
+			<div class="row">
+				<#TimeCon id="DATE" name="日期" isTime="true" pattern="YYYY-MM-DD"/>
+				<div class="col-sm-6 b-r">
+					<br/>
+					<#input id="set_meal_standard" name="推荐套餐" underline="true" hidden="set_meal_standard_id"
+					inputFun="CarteAdd.showSetMealDemo('set_meal_standard'); return false;" style="background-color: #ffffff !important;"/>
+					<#NameCon id="set_meal_standard_staple_food_1" name="主食1" underline="true" readonly="readonly"/>
+					<#NameCon id="set_meal_standard_non_staple_food_1" name="副食1" underline="true" readonly="readonly"/>
+					<#NameCon id="set_meal_standard_non_staple_food_2" name="副食2" underline="true" readonly="readonly"/>
+					<#NameCon id="set_meal_standard_drinks_1" name="饮料1" underline="true" readonly="readonly"/>
+					<#NameCon id="set_meal_standard_snacks_1" name="小吃1" underline="true" readonly="readonly"/>
+					<br/>
+					<br/>
+					<br/>
+					<#input id="set_meal_2" name="套餐2" underline="true" hidden="set_meal_2_id"
+					inputFun="CarteAdd.showSetMealDemo('set_meal_2'); return false;" style="background-color: #ffffff !important;"/>
+					<#NameCon id="set_meal_2_staple_food_1" name="主食1" underline="true" readonly="readonly"/>
+					<#NameCon id="set_meal_2_non_staple_food_1" name="副食1" underline="true" readonly="readonly"/>
+					<#NameCon id="set_meal_2_non_staple_food_2" name="副食2" underline="true" readonly="readonly"/>
+					<#NameCon id="set_meal_2_drinks_1" name="饮料1" underline="true" readonly="readonly"/>
+					<#NameCon id="set_meal_2_snacks_1" name="小吃1" underline="true" readonly="readonly"/>
+				</div>
+				<div class="col-sm-6">
+					<br/>
+					<#input id="set_meal_1" name="套餐1" underline="true" hidden="set_meal_1_id"
+					inputFun="CarteAdd.showSetMealDemo('set_meal_1'); return false;" style="background-color: #ffffff !important;"/>
+					<#NameCon id="set_meal_1_staple_food_1" name="主食1" underline="true" readonly="readonly"/>
+					<#NameCon id="set_meal_1_non_staple_food_1" name="副食1" underline="true" readonly="readonly"/>
+					<#NameCon id="set_meal_1_non_staple_food_2" name="副食2" underline="true" readonly="readonly"/>
+					<#NameCon id="set_meal_1_drinks_1" name="饮料1" underline="true" readonly="readonly"/>
+					<#NameCon id="set_meal_1_snacks_1" name="小吃1" underline="true" readonly="readonly"/>
+					<br/>
+					<br/>
+					<br/>
+					<#input id="set_meal_3" name="套餐3" underline="true" hidden="set_meal_3_id"
+					inputFun="CarteAdd.showSetMealDemo('set_meal_3'); return false;" style="background-color: #ffffff !important;"/>
+					<#NameCon id="set_meal_3_staple_food_1" name="主食1" underline="true" readonly="readonly"/>
+					<#NameCon id="set_meal_3_non_staple_food_1" name="副食1" underline="true" readonly="readonly"/>
+					<#NameCon id="set_meal_3_non_staple_food_2" name="副食2" underline="true" readonly="readonly"/>
+					<#NameCon id="set_meal_3_drinks_1" name="饮料1" underline="true" readonly="readonly"/>
+					<#NameCon id="set_meal_3_snacks_1" name="小吃1" underline="true" readonly="readonly"/>
+
+				</div>
+			</div>
+
+			<div id="menuContent" class="menuContent"
+				 style="display: none; position: absolute; z-index: 200;">
+				<ul id="setMealDemo" class="ztree tree-box" style="width: 249px !important;"></ul>
+			</div>
+
+			<div class="row btn-group-m-t">
+				<div class="col-sm-10">
+					<#button btnCss="info" name="提交" id="ensure" icon="fa-check" clickFun="CarteAdd.addSubmit()"/>
+					<#button btnCss="danger" name="取消" id="cancel" icon="fa-eraser" clickFun="CarteAdd.close()"/>
+				</div>
+			</div>
+		</div>
+
+	</div>
+</div>
+<script src="${ctxPath}/static/modular/dhxh/food/carte_add.js"></script>
+@}

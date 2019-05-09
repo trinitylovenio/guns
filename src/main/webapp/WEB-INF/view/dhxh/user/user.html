@@ -1,0 +1,55 @@
+@layout("/common/_container.html"){
+<div class="row">
+    <div class="col-sm-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>用户信息</h5>
+            </div>
+            <div class="ibox-content">
+                <div class="row row-lg">
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <#NameCon id="USER_NAME" name="用户姓名" />
+                                <#NameCon id="NAME5" name="大厦/小区" />
+                                <#SelectCon id="USER_TYPE" name="用户类型" >
+                                    <option value="">全部</option>
+                                    <option value="0">初始用户</option>
+                                    <option value="1">注册用户</option>
+                                    <option value="2">试用用户</option>
+                                    <option value="3">付费用户</option>
+                                    <option value="-1">开发测试用户</option>
+                                </#SelectCon>
+                                <#TimeCon id="beginTime" name="开始时间" isTime="true" pattern="YYYY-MM-DD 07:00:00"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <#NameCon id="NAME6" name="公司" />
+                                <#NameCon id="ACCURATE_ADDRESS" name="收货地址" />
+                                <#SelectCon id="SERVICE_TIME" name="送达时间" >
+                                    <option value="">全部</option>
+                                    <option value="1">06:00</option>
+                                    <option value="2">06:30</option>
+                                    <option value="3">07:00</option>
+                                    <option value="4">07:30</option>
+                                    <option value="5">08:00</option>
+                                    <option value="6">08:30</option>
+                                    <option value="7">09:00</option>
+                                    <option value="8">09:30</option>
+                                    <option value="9">10:00</option>
+                                </#SelectCon>
+                                <#TimeCon id="endTime" name="结束时间" isTime="true" pattern="YYYY-MM-DD 13:00:00"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <#button name="搜索" icon="fa-search" clickFun="User.search()"/>
+                                <#button name="导出Excel表格" icon="" clickFun="User.Export()"/>
+                            </div>
+                        </div>
+                        <#table id="userTable"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="${ctxPath}/static/modular/dhxh/user/user.js"></script>
+@}

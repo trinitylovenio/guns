@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dhxh.guns.modular.dhxh.dao.FoodDao">
+	<select id="queryFoodList" resultType="map">
+		SELECT f.ID,f.FOOD_ID,f.FOOD_TYPE,f.FOOD_NAME,f.FOOD_IMG,f.FOOD_DES
+		FROM dhxh.t_food f
+		WHERE 1=1
+		AND f.FOOD_STATUS=1
+		<if test="FOOD_TYPE != null and FOOD_TYPE !=''">
+			and f.FOOD_TYPE = #{FOOD_TYPE}
+		</if>
+		<if test="FOOD_NAME != null and FOOD_NAME !=''">
+			and f.FOOD_NAME like concat('%',#{FOOD_NAME},'%')
+		</if>
+		ORDER BY f.ID desc
+		<if test="offset != null and offset !='' and limit != null and limit !='' ">
+			LIMIT  ${offset},${limit}
+		</if>
+	</select>
+
+	<select id="queryFoodListNum" resultType="int">
+		SELECT count(*)
+		FROM dhxh.t_food f
+		WHERE 1=1
+		<if test="FOOD_TYPE != null and FOOD_TYPE !=''">
+			and f.FOOD_TYPE = #{FOOD_TYPE}
+		</if>
+		<if test="FOOD_NAME != null and FOOD_NAME !=''">
+			and f.FOOD_NAME like concat('%',#{FOOD_NAME},'%')
+		</if>
+	</select>
+
+	<select id="queryCarteList" resultType="map">
+		SELECT c.CARTE_ID,c.DATE,c.set_meal_standard,c.set_meal_1,c.set_meal_2,c.set_meal_3,c.carte_status,c.create_time,c.update_time
+		FROM dhxh.t_carte c
+		where 1=1
+		<if test="beginTime != null and beginTime !=''">
+			AND c.DATE>#{beginTime}
+		</if>
+		<if test="endTime != null and endTime !=''">
+			AND c.DATE <![CDATA[ <= ]]> #{endTime}
+		</if>
+		<if test="CARTE_ID != null and CARTE_ID !=''">
+			and c.CARTE_ID = #{CARTE_ID}
+		</if>
+		ORDER BY c.DATE desc
+	</select>
+
+	<select id="queryCarteListNum" resultType="int">
+		SELECT count(*)
+		FROM dhxh.t_carte c
+		where 1=1
+		<if test="beginTime != null and beginTime !=''">
+			AND c.DATE>#{beginTime}
+		</if>
+		<if test="endTime != null and endTime !=''">
+			AND c.DATE <![CDATA[ <= ]]> #{endTime}
+		</if>
+		<if test="CARTE_ID != null and CARTE_ID !=''">
+			and c.CARTE_ID = #{CARTE_ID}
+		</if>
+	</select>
+
+	<select id="queryRecommendListByID" resultType="map">
+		SELECT concat(sr.id) id,sr.standard_name,sr.standard_desc,sr.standard_img,sr.STANDARD_ID,sr.DATE,sr.STAPLE_FOOD_1,sr.NON_STAPLE_FOOD_1,sr.NON_STAPLE_FOOD_2,sr.DRINKS_1,sr.SNACKS_1,
+		if(f1.FOOD_NAME is null,'--',f1.FOOD_NAME) STAPLE_FOOD_1_NAME,
+		if(f2.FOOD_NAME is null,'--',f2.FOOD_NAME) NON_STAPLE_FOOD_1_NAME,
+		if(f3.FOOD_NAME is null,'--',f3.FOOD_NAME) NON_STAPLE_FOOD_2_NAME,
+		if(f4.FOOD_NAME is null,'--',f4.FOOD_NAME) DRINKS_1_NAME,
+		if(f5.FOOD_NAME is null,'--',f5.FOOD_NAME) SNACKS_1_NAME
+		FROM dhxh.t_standard_recommend sr
+		LEFT JOIN dhxh.t_food f1 ON f1.FOOD_ID = sr.STAPLE_FOOD_1
+		LEFT JOIN dhxh.t_food f2 ON f2.FOOD_ID = sr.NON_STAPLE_FOOD_1
+		LEFT JOIN dhxh.t_food f3 ON f3.FOOD_ID = sr.NON_STAPLE_FOOD_2
+		LEFT JOIN dhxh.t_food f4 ON f4.FOOD_ID = sr.DRINKS_1
+		LEFT JOIN dhxh.t_food f5 ON f5.FOOD_ID = sr.SNACKS_1
+		where 1=1
+		and sr.STANDARD_ID = #{STANDARD_ID}
+	</select>
+
+	<select id="queryRecommendList" resultType="map">
+		SELECT concat(sr.id) id,sr.standard_name,sr.standard_desc,sr.standard_img,sr.STANDARD_ID,sr.DATE,sr.STAPLE_FOOD_1,sr.NON_STAPLE_FOOD_1,sr.NON_STAPLE_FOOD_2,sr.DRINKS_1,sr.SNACKS_1,
+		if(f1.FOOD_NAME is null,'--',f1.FOOD_NAME) STAPLE_FOOD_1_NAME,
+		if(f2.FOOD_NAME is null,'--',f2.FOOD_NAME) NON_STAPLE_FOOD_1_NAME,
+		if(f3.FOOD_NAME is null,'--',f3.FOOD_NAME) NON_STAPLE_FOOD_2_NAME,
+		if(f4.FOOD_NAME is null,'--',f4.FOOD_NAME) DRINKS_1_NAME,
+		if(f5.FOOD_NAME is null,'--',f5.FOOD_NAME) SNACKS_1_NAME
+		FROM dhxh.t_standard_recommend sr
+		LEFT JOIN dhxh.t_food f1 ON f1.FOOD_ID = sr.STAPLE_FOOD_1
+		LEFT JOIN dhxh.t_food f2 ON f2.FOOD_ID = sr.NON_STAPLE_FOOD_1
+		LEFT JOIN dhxh.t_food f3 ON f3.FOOD_ID = sr.NON_STAPLE_FOOD_2
+		LEFT JOIN dhxh.t_food f4 ON f4.FOOD_ID = sr.DRINKS_1
+		LEFT JOIN dhxh.t_food f5 ON f5.FOOD_ID = sr.SNACKS_1
+		where 1=1
+		<if test="beginTime != null and beginTime !=''">
+			AND sr.DATE>#{beginTime}
+		</if>
+		<if test="endTime != null and endTime !=''">
+			AND sr.DATE <![CDATA[ <= ]]> #{endTime}
+		</if>
+		<if test="standard_name != null and standard_name !=''">
+			and sr.standard_name like concat('%',#{standard_name},'%')
+		</if>
+		<if test="STANDARD_ID != null and STANDARD_ID !=''">
+			and sr.STANDARD_ID = #{STANDARD_ID}
+		</if>
+		ORDER BY sr.id desc
+		<if test="offset != null and offset !='' and limit != null and limit !='' ">
+			LIMIT  ${offset},${limit}
+		</if>
+	</select>
+
+	<select id="queryRecommendListNum" resultType="int">
+		SELECT count(*)
+		FROM dhxh.t_standard_recommend sr
+		where 1=1
+		<if test="beginTime != null and beginTime !=''">
+			AND sr.DATE>#{beginTime}
+		</if>
+		<if test="endTime != null and endTime !=''">
+			AND sr.DATE <![CDATA[ <= ]]> #{endTime}
+		</if>
+		<if test="standard_name != null and standard_name !=''">
+			and sr.standard_name like concat('%',#{standard_name},'%')
+		</if>
+		<if test="STANDARD_ID != null and STANDARD_ID !=''">
+			and sr.STANDARD_ID = #{STANDARD_ID}
+		</if>
+	</select>
+
+	<select id="getMaxFoodID" resultType="java.lang.String">
+		select max(FOOD_ID)+1 FOOD_ID from dhxh.t_food
+	</select>
+
+	<insert id="mergeFood" parameterType="Map">
+		insert into dhxh.t_food(
+		<if test="FOOD_ID != null and FOOD_ID !=''">
+			FOOD_ID,
+		</if>
+		FOOD_NAME,
+		<if test="FOOD_IMG != null and FOOD_IMG !=''">
+			FOOD_IMG,
+		</if>
+		FOOD_DES,
+		FOOD_TYPE
+		)
+		values (
+		<if test="FOOD_ID != null and FOOD_ID !=''">
+			#{FOOD_ID},
+		</if>
+		#{FOOD_NAME},
+		<if test="FOOD_IMG != null and FOOD_IMG !=''">
+			#{FOOD_IMG},
+		</if>
+		#{FOOD_DES},
+		#{FOOD_TYPE}
+		)
+		on duplicate key update
+		FOOD_NAME = #{FOOD_NAME},
+		FOOD_DES = #{FOOD_DES},
+		FOOD_TYPE = #{FOOD_TYPE}
+	</insert>
+
+	<select id="getFoodByFoodID" resultType="map">
+		SELECT f.FOOD_ID,f.FOOD_TYPE,f.FOOD_NAME,f.FOOD_IMG,f.FOOD_DES
+		from dhxh.t_food f
+		where f.FOOD_ID = #{FOOD_ID}
+	</select>
+
+
+	<select id="getMaxCarteID" resultType="java.lang.String">
+		select max(CARTE_ID)+1 CARTE_ID from dhxh.t_carte
+	</select>
+
+	<insert id="mergeCarte" parameterType="Map">
+		insert into dhxh.t_carte
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="CARTE_ID != null and CARTE_ID !=''">
+				CARTE_ID,
+			</if>
+			<if test="DATE != null and DATE !=''">
+				`DATE`,
+			</if>
+			<if test="set_meal_standard != null and set_meal_standard !=''">
+				set_meal_standard,
+			</if>
+			<if test="set_meal_1 != null and set_meal_1 !=''">
+				set_meal_1,
+			</if>
+			<if test="set_meal_2 != null and set_meal_2 !=''">
+				set_meal_2,
+			</if>
+			<if test="set_meal_3 != null and set_meal_3 !=''">
+				set_meal_3,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="CARTE_ID != null and CARTE_ID !=''">
+				#{CARTE_ID},
+			</if>
+			<if test="DATE != null and DATE !=''">
+				#{DATE},
+			</if>
+			<if test="set_meal_standard != null and set_meal_standard !=''">
+				#{set_meal_standard},
+			</if>
+			<if test="set_meal_1 != null and set_meal_1 !=''">
+				#{set_meal_1},
+			</if>
+			<if test="set_meal_2 != null and set_meal_2 !=''">
+				#{set_meal_2},
+			</if>
+			<if test="set_meal_3 != null and set_meal_3 !=''">
+				#{set_meal_3},
+			</if>
+		</trim>
+		on duplicate key update
+		<trim suffixOverrides=",">
+		<if test="set_meal_standard != null and set_meal_standard !=''">
+			set_meal_standard = #{set_meal_standard},
+		</if>
+		<if test="set_meal_1 != null and set_meal_1 !=''">
+			set_meal_1 = #{set_meal_1},
+		</if>
+		<if test="set_meal_2 != null and set_meal_2 !=''">
+			set_meal_2 = #{set_meal_2},
+		</if>
+		<if test="set_meal_3 != null and set_meal_3 !=''">
+			set_meal_3 = #{set_meal_3},
+		</if>
+		</trim>
+	</insert>
+
+	<select id="getMaxStandardID" resultType="java.lang.String">
+		select max(STANDARD_ID)+1 STANDARD_ID from dhxh.t_standard_recommend
+	</select>
+
+	<insert id="mergeStandardRecommend" parameterType="Map">
+		insert into dhxh.t_standard_recommend(
+		<if test="STANDARD_ID != null and STANDARD_ID !=''">
+			STANDARD_ID,
+		</if>
+		standard_name,
+		standard_img,
+		standard_desc,
+		STAPLE_FOOD_1,
+		NON_STAPLE_FOOD_1,
+		NON_STAPLE_FOOD_2,
+		DRINKS_1,
+		SNACKS_1
+		)
+		values (
+		<if test="STANDARD_ID != null and STANDARD_ID !=''">
+			#{STANDARD_ID},
+		</if>
+		#{standard_name},
+		#{standard_img},
+		#{standard_desc},
+		#{STAPLE_FOOD_1},
+		#{NON_STAPLE_FOOD_1},
+		#{NON_STAPLE_FOOD_2},
+		#{DRINKS_1},
+		#{SNACKS_1}
+		)
+		on duplicate key update
+		standard_name = #{standard_name},
+		standard_img = #{standard_img},
+		standard_desc = #{standard_desc},
+		STAPLE_FOOD_1 =#{STAPLE_FOOD_1},
+		NON_STAPLE_FOOD_1 =#{NON_STAPLE_FOOD_1},
+		NON_STAPLE_FOOD_2 =#{NON_STAPLE_FOOD_2},
+		DRINKS_1 =#{DRINKS_1},
+		SNACKS_1 =#{SNACKS_1}
+	</insert>
+
+	<select id="checkDate" resultType="java.lang.Integer">
+		SELECT count(*) FROM dhxh.t_carte c
+		WHERE c.DATE>CURDATE()
+		AND #{DATE} > c.DATE
+		ORDER BY c.DATE
+		LIMIT 1
+	</select>
+
+</mapper>

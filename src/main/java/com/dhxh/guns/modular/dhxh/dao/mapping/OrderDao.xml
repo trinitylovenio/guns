@@ -1,0 +1,485 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dhxh.guns.modular.dhxh.dao.OrderDao">
+	<select id="queryOrderList" resultType="map">
+		SELECT ui.USER_ID,ui.USER_NAME,ui.TELEPHONE,
+		if(a02.name is null,if(a12.name is null,'--',a12.name),a02.name) NAME2,
+		if(a03.name is null,if(a13.name is null,'--',a13.name),a03.name) NAME3,
+		if(a04.name is null,if(a14.name is null,'--',a14.name),a04.name) NAME4,
+		if(a05.name is null,if(a15.name is null,'--',a15.name),a05.name) NAME5,
+		if(a06.name is null,'--',a06.name) NAME6,
+		ui.ACCURATE_ADDRESS,
+		ui.`STATUS`,
+		case when ui.user_type=-1 then '测试用户' when ui.user_type=0 then '初始用户'
+		when ui.user_type=1 then '注册用户' when ui.user_type=2 then '试用用户' when ui.user_type=3 then '付费用户' end as user_type,
+		case when ui.SERVICE_TIME=1 then '06:00' when ui.SERVICE_TIME=2 then '06:30' when ui.SERVICE_TIME=3 then '07:00'
+		when ui.SERVICE_TIME=4 then '07:30' when ui.SERVICE_TIME=5 then '08:00'
+		when ui.SERVICE_TIME=6 then '08:30' when ui.SERVICE_TIME=7 then '09:00'
+		when ui.SERVICE_TIME=8 then '09:30' when ui.SERVICE_TIME=9 then '10:00'END AS SERVICE_TIME,
+		o.ORDER_ID,
+		case when o.ORDER_STATUS=1 then '待备餐' when o.ORDER_STATUS=10 then '备餐中'
+		when o.ORDER_STATUS=15 then '待配送' when o.ORDER_STATUS=25 then '配送中' when o.ORDER_STATUS=20 then '已取消'
+		when o.ORDER_STATUS=30 then '已送达' when o.ORDER_STATUS=40 then '已评价' end as ORDER_STATUS,
+		case when o.ORDER_TYPE=1 then '标准推荐餐' when o.ORDER_TYPE=2 then '自选餐' end as ORDER_TYPE,
+		o.MULTIPLE,o.create_time,
+		case when o.print_status=1 then '已打印' when o.print_status=10 then '未打印' end as print_status,
+		oi.ITEM_ID,oi.ORDER_STATUS,oi.STAPLE_FOOD_1,oi.STAPLE_FOOD_1_SCORE,oi.NON_STAPLE_FOOD_1,oi.NON_STAPLE_FOOD_1_SCORE,oi.NON_STAPLE_FOOD_2,oi.NON_STAPLE_FOOD_2_SCORE,
+		oi.DRINKS_1,oi.DRINKS_1_SCORE,oi.SNACKS_1,oi.SNACKS_1_SCORE,oi.EVALUATION,
+		sf1.FOOD_NAME STAPLE_FOOD_1_NAME,nsf1.FOOD_NAME NON_STAPLE_FOOD_1_NAME,nsf2.FOOD_NAME NON_STAPLE_FOOD_2_NAME,
+		d1.FOOD_NAME DRINKS_1_NAME,s1.FOOD_NAME SNACKS_1_NAME,
+		sfo.id sf_id
+		FROM dhxh.t_order o
+		INNER JOIN dhxh.t_order_item oi ON oi.ORDER_ID=o.ORDER_ID
+		INNER JOIN dhxh.t_user_info ui ON ui.USER_ID = o.USER_ID
+		left JOIN dhxh.t_shunfeng_order sfo ON sfo.shunfeng_id = oi.shunfeng_id
+		left JOIN dhxh.t_address a06 ON a06.ID = oi.ADDRESS_ID AND a06.address_level =6
+		left JOIN dhxh.t_address a05 ON a05.ID = a06.PARENT_ID
+		left JOIN dhxh.t_address a04 ON a04.ID = a05.PARENT_ID
+		left JOIN dhxh.t_address a03 ON a03.ID = a04.PARENT_ID
+		left JOIN dhxh.t_address a02 ON a02.ID = a03.PARENT_ID
+		left JOIN dhxh.t_address a15 ON a15.ID = ui.ADDRESS_ID AND a15.address_level =5
+		left JOIN dhxh.t_address a14 ON a14.ID = a15.PARENT_ID
+		left JOIN dhxh.t_address a13 ON a13.ID = a14.PARENT_ID
+		left JOIN dhxh.t_address a12 ON a12.ID = a13.PARENT_ID
+		left join dhxh.t_food sf1 ON oi.STAPLE_FOOD_1 = sf1.FOOD_ID
+		left join dhxh.t_food nsf1 ON oi.NON_STAPLE_FOOD_1 = nsf1.FOOD_ID
+		left join dhxh.t_food nsf2 ON oi.NON_STAPLE_FOOD_2 = nsf2.FOOD_ID
+		left join dhxh.t_food d1 ON oi.DRINKS_1 = d1.FOOD_ID
+		left join dhxh.t_food s1 ON oi.SNACKS_1 = s1.FOOD_ID
+		where 1=1
+		and ui.user_type !=-1
+		<if test="PRINT_STATUS != null and PRINT_STATUS !=''">
+			AND o.print_status=#{PRINT_STATUS}
+		</if>
+		<if test="beginTime != null and beginTime !=''">
+			AND o.create_time>#{beginTime}
+		</if>
+		<if test="endTime != null and endTime !=''">
+			AND o.create_time <![CDATA[ <= ]]> #{endTime}
+		</if>
+		<if test="USER_NAME != null and USER_NAME !=''">
+			AND ui.USER_NAME = #{USER_NAME}
+		</if>
+		<if test="user_type != null and user_type !=''">
+			AND ui.user_type = #{user_type}
+		</if>
+		<if test="TELEPHONE != null and TELEPHONE !=''">
+			AND ui.TELEPHONE = #{TELEPHONE}
+		</if>
+		<if test="SERVICE_TIME != null and SERVICE_TIME !=''">
+			AND ui.SERVICE_TIME = #{SERVICE_TIME}
+		</if>
+		<if test="NAME5 != null and NAME5 !=''">
+			AND (a05.name like CONCAT('%',#{NAME5},'%') or a15.name like CONCAT('%',#{NAME5},'%'))
+		</if>
+		<if test="NAME6 != null and NAME6 !=''">
+			AND a06.name like CONCAT('%',#{NAME6},'%')
+		</if>
+		<if test="ACCURATE_ADDRESS != null and ACCURATE_ADDRESS !=''">
+			AND ui.ACCURATE_ADDRESS like CONCAT('%',#{ACCURATE_ADDRESS},'%')
+		</if>
+		<if test="ORDER_STATUS != null and ORDER_STATUS !=''">
+			AND o.ORDER_STATUS = #{ORDER_STATUS}
+		</if>
+		<if test="ORDER_TYPE != null and ORDER_TYPE !=''">
+			AND o.ORDER_TYPE = #{ORDER_TYPE}
+		</if>
+		ORDER BY NAME6,NAME5,ui.SERVICE_TIME DESC
+		<if test="offset != null and offset !='' and limit != null and limit !='' ">
+			LIMIT  ${offset},${limit}
+		</if>
+	</select>
+
+	<select id="queryOrderListNum" resultType="int">
+		SELECT count(*)
+		FROM dhxh.t_order o
+		INNER JOIN dhxh.t_order_item oi ON oi.ORDER_ID=o.ORDER_ID
+		INNER JOIN dhxh.t_user_info ui ON ui.USER_ID = o.USER_ID
+		left JOIN dhxh.t_address a06 ON a06.ID = ui.ADDRESS_ID AND a06.address_level =6
+		left JOIN dhxh.t_address a05 ON a05.ID = a06.PARENT_ID
+		left JOIN dhxh.t_address a15 ON a15.ID = ui.ADDRESS_ID AND a15.address_level =5
+		WHERE 1=1
+		<if test="PRINT_STATUS != null and PRINT_STATUS !=''">
+			AND o.print_status=#{PRINT_STATUS}
+		</if>
+		<if test="beginTime != null and beginTime !=''">
+			AND o.create_time>#{beginTime}
+		</if>
+		<if test="endTime != null and endTime !=''">
+			AND o.create_time <![CDATA[ <= ]]> #{endTime}
+		</if>
+		<if test="USER_NAME != null and USER_NAME !=''">
+			AND ui.USER_NAME = #{USER_NAME}
+		</if>
+		<if test="user_type != null and user_type !=''">
+			AND ui.user_type = #{user_type}
+		</if>
+		<if test="TELEPHONE != null and TELEPHONE !=''">
+			AND ui.TELEPHONE = #{TELEPHONE}
+		</if>
+		<if test="SERVICE_TIME != null and SERVICE_TIME !=''">
+			AND ui.SERVICE_TIME = #{SERVICE_TIME}
+		</if>
+		<if test="NAME5 != null and NAME5 !=''">
+			AND (a05.name like CONCAT('%',#{NAME5},'%') or a15.name like CONCAT('%',#{NAME5},'%'))
+		</if>
+		<if test="NAME6 != null and NAME6 !=''">
+			AND a06.name like CONCAT('%',#{NAME6},'%')
+		</if>
+		<if test="ACCURATE_ADDRESS != null and ACCURATE_ADDRESS !=''">
+			AND ui.ACCURATE_ADDRESS = #{ACCURATE_ADDRESS}
+		</if>
+		<if test="ORDER_STATUS != null and ORDER_STATUS !=''">
+			AND o.ORDER_STATUS = #{ORDER_STATUS}
+		</if>
+		<if test="ORDER_TYPE != null and ORDER_TYPE !=''">
+			AND o.ORDER_TYPE = #{ORDER_TYPE}
+		</if>
+	</select>
+
+	<select id="queryOrderCountList" resultType="map">
+		SELECT f.FOOD_NAME,sum(t.MULTIPLE) as COUNT_NUM FROM (
+		SELECT oi.STAPLE_FOOD_1 AS food,o.MULTIPLE
+		FROM dhxh.t_order o
+		INNER JOIN dhxh.t_order_item oi ON oi.ORDER_ID = o.ORDER_ID
+		inner join dhxh.t_user_info ui on ui.user_id = o.user_id
+		WHERE 1=1
+		and ui.ADDRESS_ID is not null
+		and ui.USER_TYPE !=-1
+		<if test="beginTime != null and beginTime !=''">
+			AND o.create_time>#{beginTime}
+		</if>
+		<if test="endTime != null and endTime !=''">
+			AND o.create_time <![CDATA[ <= ]]> #{endTime}
+		</if>
+		UNION ALL
+		SELECT oi.NON_STAPLE_FOOD_1 AS food,o.MULTIPLE
+		FROM dhxh.t_order o
+		INNER JOIN dhxh.t_order_item oi ON oi.ORDER_ID = o.ORDER_ID
+		inner join dhxh.t_user_info ui on ui.user_id = o.user_id
+		WHERE 1=1
+		and ui.ADDRESS_ID is not null
+		and ui.USER_TYPE !=-1
+		<if test="beginTime != null and beginTime !=''">
+			AND o.create_time>#{beginTime}
+		</if>
+		<if test="endTime != null and endTime !=''">
+			AND o.create_time <![CDATA[ <= ]]> #{endTime}
+		</if>
+		UNION ALL
+		SELECT oi.NON_STAPLE_FOOD_2 AS food,o.MULTIPLE
+		FROM dhxh.t_order o
+		INNER JOIN dhxh.t_order_item oi ON oi.ORDER_ID = o.ORDER_ID
+		inner join dhxh.t_user_info ui on ui.user_id = o.user_id
+		WHERE 1=1
+		and ui.ADDRESS_ID is not null
+		and ui.USER_TYPE !=-1
+		<if test="beginTime != null and beginTime !=''">
+			AND o.create_time>#{beginTime}
+		</if>
+		<if test="endTime != null and endTime !=''">
+			AND o.create_time <![CDATA[ <= ]]> #{endTime}
+		</if>
+		UNION ALL
+		SELECT oi.DRINKS_1 AS food,o.MULTIPLE
+		FROM dhxh.t_order o
+		INNER JOIN dhxh.t_order_item oi ON oi.ORDER_ID = o.ORDER_ID
+		inner join dhxh.t_user_info ui on ui.user_id = o.user_id
+		WHERE 1=1
+		and ui.ADDRESS_ID is not null
+		and ui.USER_TYPE !=-1
+		<if test="beginTime != null and beginTime !=''">
+			AND o.create_time>#{beginTime}
+		</if>
+		<if test="endTime != null and endTime !=''">
+			AND o.create_time <![CDATA[ <= ]]> #{endTime}
+		</if>
+		UNION ALL
+		SELECT oi.SNACKS_1 AS food,o.MULTIPLE
+		FROM dhxh.t_order o
+		INNER JOIN dhxh.t_order_item oi ON oi.ORDER_ID = o.ORDER_ID
+		inner join dhxh.t_user_info ui on ui.user_id = o.user_id
+		WHERE 1=1
+		and ui.ADDRESS_ID is not null
+		and ui.USER_TYPE !=-1
+		<if test="beginTime != null and beginTime !=''">
+			AND o.create_time>#{beginTime}
+		</if>
+		<if test="endTime != null and endTime !=''">
+			AND o.create_time <![CDATA[ <= ]]> #{endTime}
+		</if>
+		)t
+		LEFT JOIN dhxh.t_food f ON f.FOOD_ID = t.food
+		GROUP BY f.FOOD_NAME
+	</select>
+
+	<update id="updateOrderStatus">
+		update dhxh.t_order
+		set order_status = 15,
+		print_status = 1
+		where order_id = #{order_id} and order_status = 10
+	</update>
+
+	<update id="updateOrderItemStatus">
+		update dhxh.t_order_item
+		set order_status = 15
+		where order_id = #{order_id} and order_status = 10
+	</update>
+
+	<select id="getServiceDate" resultType="java.lang.String">
+        select min(c.date) `date` from dhxh.t_carte c
+        where c.date>=curdate()
+        order by c.DATE
+        LIMIT #{day}
+    </select>
+
+	<select id="queryGroupServiceList" resultType="map">
+		SELECT distinct concat(g.id) id,g.team_num,g.create_time,concat(g.team_num-g.remain_num) AS join_num,concat(199-(g.team_num-1)*10) balance,
+		case
+		when g.`status` = 1 then '未成团'
+		when g.`status` = 2 then '已成团'
+		when g.`status` = 4 then '成团失败未退款'
+		when g.`status` = 5 then '成团失败已退款' end `status`,
+		case
+		when g.delivery_type = 0 then '大厦'
+		when g.delivery_type = 1 then '小区' end delivery_type,
+		case
+		when g.delivery_time=1 then '06:00'
+		when g.delivery_time=2 then '06:30'
+		when g.delivery_time=3 then '07:00'
+		when g.delivery_time=4 then '07:30'
+		when g.delivery_time=5 then '08:00'
+		when g.delivery_time=6 then '08:30'
+		when g.delivery_time=7 then '09:00'
+		when g.delivery_time=8 then '09:30'
+		when g.delivery_time=9 then '10:00'
+		end as delivery_time,
+		m1.name head_name,m1.telephone head_phone,
+		a4.name name4,a5.name name5,a6.name name6,a6.accurate_address,g.address_info
+		FROM dhxh.t_group_buy_record g
+		inner JOIN dhxh.t_member_record m1 ON m1.group_id = g.id AND m1.pay_mark=1 AND m1.head_mark = 1
+		INNER JOIN dhxh.t_address a6 ON a6.id = g.address_id
+		LEFT JOIN dhxh.t_address a5 ON a5.id = a6.parent_id
+		LEFT JOIN dhxh.t_address a4 ON a4.id = a5.parent_id
+		LEFT JOIN dhxh.t_member_record m2 ON m2.group_id = g.id AND m1.pay_mark=1 AND m2.head_mark =2
+		WHERE 1=1
+		<if test="id != null and id !=''">
+			and g.id = #{id}
+		</if>
+		<if test="address_name != null and address_name !=''">
+			and (
+			a4.name like concat('%',#{address_name},'%')
+			or a5.name like concat('%',#{address_name},'%')
+			or a6.name like concat('%',#{address_name},'%')
+			or g.address_info like concat('%',#{address_name},'%')
+			)
+		</if>
+		<if test="group_status != null and group_status !=''">
+			and g.`status` = #{group_status}
+		</if>
+		<if test="user_name != null and user_name !=''">
+			and (
+			m1.name = #{user_name}
+			or m2.name = #{user_name}
+			)
+		</if>
+		<if test="telephone != null and telephone !=''">
+			and (
+			m1.telephone = #{telephone}
+			or m2.telephone = #{telephone}
+			)
+		</if>
+		<if test="beginTime != null and beginTime !=''">
+			AND g.create_time>#{beginTime}
+		</if>
+		<if test="endTime != null and endTime !=''">
+			AND g.create_time <![CDATA[ <= ]]> #{endTime}
+		</if>
+		order by id desc
+		<if test="offset != null and offset !='' and limit != null and limit !='' ">
+			LIMIT  ${offset},${limit}
+		</if>
+	</select>
+
+	<select id="queryGroupServiceListNum" resultType="int">
+		SELECT count(distinct g.id)
+		FROM dhxh.t_group_buy_record g
+		inner JOIN dhxh.t_member_record m1 ON m1.group_id = g.id AND m1.pay_mark=1 AND m1.head_mark = 1
+		INNER JOIN dhxh.t_address a6 ON a6.id = g.address_id
+		LEFT JOIN dhxh.t_address a5 ON a5.id = a6.parent_id
+		LEFT JOIN dhxh.t_address a4 ON a4.id = a5.parent_id
+		LEFT JOIN dhxh.t_member_record m2 ON m2.group_id = g.id AND m1.pay_mark=1 AND m2.head_mark =2
+		WHERE 1=1
+		<if test="id != null and id !=''">
+			and g.id = #{id}
+		</if>
+		<if test="address_name != null and address_name !=''">
+			and (
+			a4.name like concat('%',#{address_name},'%')
+			or a5.name like concat('%',#{address_name},'%')
+			or a6.name like concat('%',#{address_name},'%')
+			or g.address_info like concat('%',#{address_name},'%')
+			)
+		</if>
+		<if test="group_status != null and group_status !=''">
+			and g.`status` = #{group_status}
+		</if>
+		<if test="user_name != null and user_name !=''">
+			and (
+			m1.name = #{user_name}
+			or m2.name = #{user_name}
+			)
+		</if>
+		<if test="telephone != null and telephone !=''">
+			and (
+			m1.telephone = #{telephone}
+			or m2.telephone = #{telephone}
+			)
+		</if>
+		<if test="beginTime != null and beginTime !=''">
+			AND g.create_time>#{beginTime}
+		</if>
+		<if test="endTime != null and endTime !=''">
+			AND g.create_time <![CDATA[ <= ]]> #{endTime}
+		</if>
+	</select>
+
+	<select id="queryGroupServiceInfoList" resultType="map">
+		SELECT m.name,m.telephone,concat(us.charge_begin_time) as charge_begin_time,concat(us.charge_end_time) as charge_end_time,
+		up.purchase_time,up.price,up.cash,up.coupon,up.balance,if(m.head_mark=1,CONCAT((g.team_num-1)*10),0) back,
+		up.purchase_id,m.user_id
+		FROM dhxh.t_group_buy_record g
+		inner join dhxh.t_member_record m ON m.group_id = g.id
+		inner join dhxh.t_user_purchase up ON up.package_id = m.group_id AND up.user_id = m.user_id AND up.`status` =10
+		INNER JOIN dhxh.t_user_service us ON us.user_id = up.user_id
+		WHERE 1=1
+		and m.group_id = #{group_id}
+		AND us.service_type = 2
+		order by up.purchase_time
+		<if test="offset != null and offset !='' and limit != null and limit !='' ">
+			LIMIT  ${offset},${limit}
+		</if>
+	</select>
+
+	<select id="queryGroupServiceInfoListNum" resultType="int">
+		SELECT count(*)
+		FROM dhxh.t_group_buy_record g
+		inner join dhxh.t_member_record m ON m.group_id = g.id
+		inner join dhxh.t_user_purchase up ON up.package_id = m.group_id AND up.user_id = m.user_id AND up.`status` =10
+		INNER JOIN dhxh.t_user_service us ON us.user_id = up.user_id
+		WHERE 1=1
+		and m.group_id = #{group_id}
+		AND us.service_type = 2
+	</select>
+
+    <select id="queryPersonalServiceList" resultType="map">
+        SELECT ui.user_name,ui.telephone,concat(us.charge_begin_time) as charge_begin_time,concat(us.charge_end_time) as charge_end_time,
+        a4.name name4,a5.name name5,a6.name name6,ui.accurate_address,
+        case
+        when ui.service_time=1 then '06:00'
+        when ui.service_time=2 then '06:30'
+        when ui.service_time=3 then '07:00'
+        when ui.service_time=4 then '07:30'
+        when ui.service_time=5 then '08:00'
+        when ui.service_time=6 then '08:30'
+        when ui.service_time=7 then '09:00'
+        when ui.service_time=8 then '09:30'
+        when ui.service_time=9 then '10:00'
+        end as service_time,
+        up.purchase_time,up.price,up.cash,up.coupon,up.balance,
+        case
+        when us.charge_status = 10 AND us.charge_begin_time>NOW() then '未开始'
+        when us.charge_status = 10 AND NOW()>us.charge_begin_time and us.charge_end_time>now() then '服务中'
+        when us.charge_status = 21 then '暂停'
+        when us.charge_status = 20 AND NOW()>us.charge_end_time then '已结束'
+        END AS service_status,
+        up.purchase_id
+        FROM dhxh.t_user_service us
+        INNER JOIN dhxh.t_user_info ui ON ui.user_id = us.user_id
+        INNER JOIN dhxh.t_address a6 ON a6.id = ui.address_id
+        LEFT JOIN dhxh.t_address a5 ON a5.id = a6.parent_id
+        LEFT JOIN dhxh.t_address a4 ON a4.id = a5.parent_id
+        INNER JOIN dhxh.t_user_purchase up  ON up.user_id = us.user_id AND up.package_id = 'p00001' AND up.`status` = 10
+        WHERE us.service_type =1
+        <if test="address_name != null and address_name !=''">
+            and (
+            a4.name like concat('%',#{address_name},'%')
+            or a5.name like concat('%',#{address_name},'%')
+            or a6.name like concat('%',#{address_name},'%')
+            or ui.accurate_address like concat('%',#{address_name},'%')
+            )
+        </if>
+        <if test="service_status != null and service_status !='' and service_status == 10">
+            and us.charge_status = 10 AND NOW()>us.charge_begin_time and us.charge_end_time>now()
+        </if>
+        <if test="service_status != null and service_status !='' and service_status == 0">
+            and us.charge_status = 10 AND us.charge_begin_time>NOW()
+        </if>
+        <if test="service_status != null and service_status !='' and service_status == 21">
+            and us.charge_status = 21
+        </if>
+        <if test="service_status != null and service_status !='' and service_status == 20">
+            and us.charge_status = 20
+        </if>
+        <if test="user_name != null and user_name !=''">
+            and ui.user_name = #{user_name}
+        </if>
+        <if test="telephone != null and telephone !=''">
+            and ui.telephone = #{telephone}
+        </if>
+        <if test="beginTime != null and beginTime !=''">
+            AND up.purchase_time>#{beginTime}
+        </if>
+        <if test="endTime != null and endTime !=''">
+            AND up.purchase_time <![CDATA[ <= ]]> #{endTime}
+        </if>
+        order by up.purchase_time
+        <if test="offset != null and offset !='' and limit != null and limit !='' ">
+            LIMIT  ${offset},${limit}
+        </if>
+    </select>
+
+    <select id="queryPersonalServiceListNum" resultType="int">
+        SELECT count(*)
+        FROM dhxh.t_user_service us
+        INNER JOIN dhxh.t_user_info ui ON ui.user_id = us.user_id
+        INNER JOIN dhxh.t_address a6 ON a6.id = ui.address_id
+        LEFT JOIN dhxh.t_address a5 ON a5.id = a6.parent_id
+        LEFT JOIN dhxh.t_address a4 ON a4.id = a5.parent_id
+        INNER JOIN dhxh.t_user_purchase up  ON up.user_id = us.user_id AND up.package_id = 'p00001' AND up.`status` = 10
+        WHERE us.service_type =1
+        <if test="address_name != null and address_name !=''">
+            and (
+            a4.name like concat('%',#{address_name},'%')
+            or a5.name like concat('%',#{address_name},'%')
+            or a6.name like concat('%',#{address_name},'%')
+            or ui.accurate_address like concat('%',#{address_name},'%')
+            )
+        </if>
+        <if test="service_status != null and service_status !='' and charge_status == 10">
+            and us.charge_status = 10 AND NOW()>us.charge_begin_time and now()>us.charge_end_time
+        </if>
+        <if test="service_status != null and service_status !='' and charge_status == 0">
+            and us.charge_status = 10 AND us.charge_begin_time>NOW()
+        </if>
+        <if test="service_status != null and service_status !='' and charge_status == 21">
+            and us.charge_status = 21
+        </if>
+        <if test="service_status != null and service_status !='' and charge_status == 20">
+            and us.charge_status = 20
+        </if>
+        <if test="user_name != null and user_name !=''">
+            and ui.user_name = #{user_name}
+        </if>
+        <if test="telephone != null and telephone !=''">
+            and ui.telephone = #{telephone}
+        </if>
+        <if test="beginTime != null and beginTime !=''">
+            AND up.purchase_time>#{beginTime}
+        </if>
+        <if test="endTime != null and endTime !=''">
+            AND up.purchase_time <![CDATA[ <= ]]> #{endTime}
+        </if>
+	</select>
+
+</mapper>

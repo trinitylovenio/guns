@@ -1,0 +1,39 @@
+@layout("/common/_container.html"){
+<div class="row">
+    <div class="col-sm-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>食物管理</h5>
+            </div>
+            <div class="ibox-content">
+                <div class="row row-lg">
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <#NameCon id="FOOD_NAME" name="名称" />
+                                <#button name="添加" icon="" clickFun="Food.add()"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <#SelectCon id="FOOD_TYPE" name="类型" >
+                                    <option value="">全部</option>
+                                    <option value="1">主食</option>
+                                    <option value="2">副食</option>
+                                    <option value="3">饮料</option>
+                                    <option value="4">小吃</option>
+                                </#SelectCon>
+                                <#button name="修改" icon="" clickFun="Food.edit()"/>
+                            </div>
+                            <div class="col-sm-3">
+
+                                <#button name="搜索" icon="fa-search" clickFun="Food.search()"/>
+                            </div>
+                        </div>
+                        <#table id="foodTable"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="${ctxPath}/static/modular/dhxh/food/food.js"></script>
+@}

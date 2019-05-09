@@ -1,0 +1,4 @@
+#Maven 多环境指定配置
+spring:
+  profiles:
+    active: @profileActive@

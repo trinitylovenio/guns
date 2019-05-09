@@ -1,0 +1,38 @@
+@layout("/common/_container.html"){
+<div class="ibox float-e-margins">
+    <div class="ibox-title">
+        <h5>团购订单管理</h5>
+    </div>
+    <div class="ibox-content">
+        <div class="form-horizontal" id="userInfoForm">
+
+            <div class="row">
+                <div class="col-sm-6 b-r">
+                    <#input id="group_id" name="团购id" value="${id}" readonly="readonly" underline="true" />
+                    <#input id="head_name" name="团长姓名" value="${head_name}" readonly="readonly" underline="true" />
+                    <#input id="head_phone" name="团购电话" value="${head_phone}" readonly="readonly" underline="true" />
+                    <#input id="delivery_time" name="配送时间" value="${delivery_time}" readonly="readonly" underline="true" />
+                    <#input id="address" name="配送时间配送地址" value="${address}" readonly="readonly" underline="true" />
+                </div>
+                <div class="col-sm-6">
+                    <#input id="create_time" name="团购发起时间" value="${create_time}" readonly="readonly" underline="true" />
+                    <#input id="status" name="团购状态" value="${status}" readonly="readonly" underline="true" />
+                    <#input id="balance" name="团购金额" value="${balance}" readonly="readonly" underline="true" />
+                    <#input id="team_num" name="团购人数" value="${team_num}" readonly="readonly" underline="true" />
+                </div>
+            </div>
+            <#table id="groupServiceInfoTable"/>
+
+            <div class="row btn-group-m-t">
+                <div class="col-sm-10">
+                    <#button btnCss="danger" name="返回" id="cancel" icon="fa-eraser" clickFun="GroupServiceInfo.close()"/>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<script src="${ctxPath}/static/modular/dhxh/service/groupServiceInfo.js"></script>
+@}

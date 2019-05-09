@@ -1,0 +1,125 @@
+##########################################################
+##################  所有profile共有的配置  #################
+##########################################################
+
+###################  guns配置  ###################
+guns:
+  swagger-open: true #是否开启swagger (true/false)
+  kaptcha-open: false #是否开启登录时验证码 (true/false)
+  session-open: false #是否开启session验证 (true/false)
+  #file-upload-path: d:/tmp  #文件上传目录(不配置的话为java.io.tmpdir目录)
+  session-invalidate-time: 1800 #session失效时间 单位：秒
+  session-validation-interval: 900 #多久检测一次失效的session 单位：秒
+
+###################  项目启动端口  ###################
+server:
+  contextPath: /dhxh
+  port: 8800
+  address: 0.0.0.0
+  tomcat:
+#    remote-ip-header: x-forwarded-for
+    protocol-header: x-forwarded-proto
+#    port-header: X-Forwarded-Port
+    use-forward-headers: true
+    #其它设置是让Tomcat去Http头信息去获取协议信息，而不是从HttpServletRequest
+
+###################  beetl配置  ###################
+beetl:
+  delimiter-statement-start: \@   #开始结束标签(yaml不允许@开头)
+  delimiter-statement-end: null
+  resource-tagroot: common/tags   #自定义标签文件Root目录和后缀
+  resource-tagsuffix: tag
+
+
+###################  spring配置  ###################
+spring:
+  profiles:
+    active: dev
+  mvc:
+    static-path-pattern: /static/**
+    view:
+      prefix: /WEB-INF/view
+  http:
+    converters:
+      preferred-json-mapper: fastjson
+
+###################  mybatis-plus配置  ###################
+mybatis-plus:
+  mapper-locations: classpath*:com/dhxh/guns/**/mapping/*.xml
+  typeAliasesPackage: com.dhxh.guns.common.persistence.model
+  global-config:
+    id-type: 1  #1:数据库ID自增   2:用户输入id   3:全局唯一id(IdWorker)   4:全局唯一ID(uuid)
+    db-column-underline: false
+    refresh-mapper: true
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: true #配置的缓存的全局开关
+    lazyLoadingEnabled: true #延时加载的开关
+    multipleResultSetsEnabled: true #开启的话，延时加载一个属性时会加载该对象全部属性，否则按需加载属性
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #打印sql语句,调试用
+
+---
+
+##########################################################
+###################  开发环境的profile  ###################
+##########################################################
+spring:
+  profiles: dev
+  datasource:
+      url: jdbc:mysql://127.0.0.1:3306/guns?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
+#      url: jdbc:mysql://120.79.229.220:3306/guns?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
+#      url: jdbc:mysql://47.107.125.112:3306/guns?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
+      username: root
+      password: root
+#      password: 5i47BhtnBf
+#      password: 2duZTKr7NY
+      filters: log4j,wall,mergeStat
+
+######## aliyun短信配置 ####
+aliyun:
+  accessKeyId: LTAIEul1rnscq8EK
+  accessSecret: 7e7srgAtnhovRtkP1QtBFjvBVo8Xgo
+  regionId: default
+  signName.dx: 大哈小哈早餐预订
+  templateCode.dx: SMS_163852527 #大哈小哈验证码模版code
+
+shunfeng:
+  dev_id: 1535742689 #同城开发者ID  测试
+  dev_key: c581407bbd0cfd0709c3f99807de4bf9 #测试
+  shop_id: 3243279847393 #店铺ID顺丰生成
+#  shop_id: e939a5b89f70be0aee5aa5593105ccfb #店铺ID三方自己写的
+  shop_type: 1
+  order_source: 大哈小哈 #订单接入来源
+  lbs_type: 1 #坐标类型	1：百度坐标，2：高德坐标
+  pay_type: 1 #用户支付方式
+  is_appoint: 1 #是否是预约单	0：非预约单；1：预约单
+  is_insured: 0 #是否保价，0：非保价；1：保价
+  rider_pick_method: 1 #物流流向	1：从门店取件送至用户；2：从用户取件送至门店
+  version: 17 #版本号	参照文档主版本号填写如：文档版本号1.7,version=17
+  orderUrl: https://commit-openic.sf-express.com/open/api/external/createorder?sign=
+
+logging:
+  level: debug
+  file: logs/guns.log
+#logging
+#logging:
+#  config: classpath:log4j2.xml
+---
+
+##########################################################
+###################  正式环境的profile  ###################
+##########################################################
+spring:
+  profiles: produce
+  datasource:
+      url: jdbc:mysql://127.0.0.1:3306/guns?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
+      username: root
+      password: cA30ia50N5
+      filters: log4j,wall,mergeStat
+
+logging:
+  level: warn
+  file: logs/guns.log
+#logging
+#logging:
+#  config: classpath:log4j2.xml

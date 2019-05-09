@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dhxh.guns.modular.dhxh.dao.ShunfengDao">
+	<select id="queryShunfengOrderList" resultType="map">
+		SELECT so.shunfeng_id,so.sf_order_id,so.user_name,so.user_phone,so.user_address,so.user_lng,so.user_lat,so.expect_time,so.product_num,so.order_status,
+		so.push_time,so.create_time
+		FROM dhxh.t_shunfeng_order so
+		WHERE 1=1
+		<if test="user_name != null and user_name !=''">
+			AND so.user_name=#{user_name}
+		</if>
+		<if test="user_phone != null and user_phone !=''">
+			AND so.user_phone=#{user_phone}
+		</if>
+		<if test="user_address != null and user_address !=''">
+			AND so.user_address like concat('%',#{user_address},'%')
+		</if>
+		<if test="expect_time != null and expect_time !=''">
+			AND so.expect_time = #{expect_time}
+		</if>
+		<if test="beginTime != null and beginTime !=''">
+			AND so.create_time>#{beginTime}
+		</if>
+		<if test="endTime != null and endTime !=''">
+			AND so.create_time <![CDATA[ <= ]]> #{endTime}
+		</if>
+		<if test="order_status!=null and order_status!=''">
+			AND so.order_status = #{order_status}
+		</if>
+		order by so.order_status desc,so.order_status
+		<if test="offset != null and offset !='' and limit != null and limit !='' ">
+			LIMIT  ${offset},${limit}
+		</if>
+	</select>
+
+	<select id="queryShunfengOrderListNum" resultType="int">
+		SELECT count(*)
+		FROM dhxh.t_shunfeng_order so
+		WHERE 1=1
+		<if test="user_name != null and user_name !=''">
+			AND so.user_name=#{user_name}
+		</if>
+		<if test="user_phone != null and user_phone !=''">
+			AND so.user_phone=#{user_phone}
+		</if>
+		<if test="user_address != null and user_address !=''">
+			AND so.user_address like concat('%',#{user_address},'%')
+		</if>
+		<if test="expect_time != null and expect_time !=''">
+			AND so.expect_time = #{expect_time}
+		</if>
+		<if test="beginTime != null and beginTime !=''">
+			AND so.create_time>#{beginTime}
+		</if>
+		<if test="endTime != null and endTime !=''">
+			AND so.create_time <![CDATA[ <= ]]> #{endTime}
+		</if>
+		<if test="order_status!=null and order_status!=''">
+			AND so.order_status = #{order_status}
+		</if>
+	</select>
+
+	<update id="updateShunfengOrder">
+		update dhxh.t_shunfeng_order so
+		<set>
+			<if test="sf_order_id != null and sf_order_id !=''">
+				so.sf_order_id = #{sf_order_id},
+			</if>
+			<if test="order_status!=null and order_status!=''">
+				so.order_status = #{order_status},
+			</if>
+		</set>
+		where so.shunfeng_id = #{shunfeng_id}
+	</update>
+
+</mapper>

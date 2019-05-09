@@ -1,0 +1,31 @@
+@layout("/common/_container.html"){
+<div class="row">
+    <div class="col-sm-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h3>企业订单</h3>
+            </div>
+            <div class="ibox-content">
+                <div class="row row-lg">
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <#NameCon id="business_name" name="企业名称" />
+                                <!--<#TimeCon id="beginTime" name="开始时间" isTime="true" pattern="YYYY-MM-DD hh:mm:ss"/>-->
+                            </div>
+                            <div class="col-sm-3">
+                                <!--<#TimeCon id="endTime" name="结束时间" isTime="true" pattern="YYYY-MM-DD hh:mm:ss"/>-->
+                            </div>
+                            <div class="col-sm-3">
+                                <#button name="查询" icon="fa-search" clickFun="MS.search()"/>
+                            </div>
+                        </div>
+                        <#table id="MSTable"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="${ctxPath}/static/modular/dhxh/business/monthlySubscription.js"></script>
+@}

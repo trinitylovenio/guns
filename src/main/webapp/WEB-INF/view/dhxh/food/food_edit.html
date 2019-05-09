@@ -1,0 +1,36 @@
+@layout("/common/_container.html"){
+<div class="ibox float-e-margins">
+	<div class="ibox-content">
+		<div class="form-horizontal" id="userInfoForm">
+
+			<div class="row">
+				<div class="col-sm-6 b-r">
+					<input type="hidden" ID="FOOD_ID" value="${FOOD_ID}">
+					<input type="hidden" ID="TYPE" value="${FOOD_TYPE}">
+					<#input id="FOOD_NAME" name="食品名称" underline="true" value="${FOOD_NAME}"/>
+					<#select id="FOOD_TYPE" name="类型" >
+						<option value="1">主食</option>
+						<option value="2">副食</option>
+						<option value="3">饮料</option>
+						<option value="4">小吃</option>
+				    </#select>
+				</div>
+				<div class="col-sm-6">
+					<#input id="FOOD_DES" name="食品描述" underline="true" value="${FOOD_DES}" />
+					<#input id="FOOD_IMG" name="图片" value="${FOOD_IMG}"/>
+				</div>
+			</div>
+
+
+			<div class="row btn-group-m-t">
+				<div class="col-sm-10">
+					<#button btnCss="info" name="提交" id="ensure" icon="fa-check" clickFun="FoodEdit.editSubmit()"/>
+					<#button btnCss="danger" name="取消" id="cancel" icon="fa-eraser" clickFun="FoodEdit.close()"/>
+				</div>
+			</div>
+		</div>
+
+	</div>
+</div>
+<script src="${ctxPath}/static/modular/dhxh/food/food_edit.js"></script>
+@}

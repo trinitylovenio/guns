@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dhxh.guns.modular.dhxh.dao.UserDao">
+
+	<select id="queryUserList" resultType="map">
+		SELECT concat(ui.id) id,ui.user_id,ui.open_id,ui.session_key,ui.nick_name,ui.user_name,ui.user_type,ui.status,ui.create_time,
+		ui.telephone,ui.user_pic,ui.address_id,ui.gender,concat(ui.group_id) group_id,
+		if(a04.name is null,if(a14.name is null,'--',a14.name),a04.name) NAME4,
+		if(a05.name is null,if(a15.name is null,'--',a15.name),a05.name) NAME5,
+		if(a06.name is null,'--',a06.name) NAME6,
+		ui.accurate_address,
+		case
+		when ui.service_time=1 then '06:00'
+		when ui.service_time=2 then '06:30'
+		when ui.service_time=3 then '07:00'
+		when ui.service_time=4 then '07:30'
+		when ui.service_time=5 then '08:00'
+		when ui.service_time=6 then '08:30'
+		when ui.service_time=7 then '09:00'
+		when ui.service_time=8 then '09:30'
+		when ui.service_time=9 then '10:00'
+		end as service_time,
+		if(us1.charge_status =10,
+		if(
+		us1.charge_end_time>=now(),
+		if(
+		now()>us1.pause_begin_time and us1.pause_end_time>=now(),
+		21,
+		10
+		),
+		20
+		),
+		20
+		) AS personal_charge_status,
+		if(us2.charge_status = 10,
+		if(
+		us2.charge_end_time>=now(),
+		if(
+		now()>us2.pause_begin_time and us2.pause_end_time>=now(),
+		21,
+		10
+		),
+		20
+		),
+		20
+		)AS group_charge_status,
+		if(us3.charge_status = 30,
+		if(
+		us3.charge_end_time>=now(),
+		if(
+		now()>us3.pause_begin_time and us3.pause_end_time>=now(),
+		21,
+		10
+		),
+		20
+		),
+		20
+		)AS trial_charge_status
+		FROM dhxh.t_user_info ui
+		left join dhxh.t_user_service us1 on us1.user_id = ui.user_id and us1.service_type = 1
+		left join dhxh.t_user_service us2 on us2.user_id = ui.user_id and us2.service_type = 2
+		left join dhxh.t_user_service us3 on us3.user_id = ui.user_id and us3.service_type = 3
+		left JOIN dhxh.t_address a06 ON a06.ID = ui.ADDRESS_ID AND a06.address_level =6
+		left JOIN dhxh.t_address a05 ON a05.ID = a06.PARENT_ID
+		left JOIN dhxh.t_address a04 ON a04.ID = a05.PARENT_ID
+		left JOIN dhxh.t_address a15 ON a15.ID = ui.ADDRESS_ID AND a15.address_level =5
+		left JOIN dhxh.t_address a14 ON a14.ID = a15.PARENT_ID
+		where 1=1
+		<if test="beginTime != null and beginTime !=''">
+			AND ui.create_time>#{beginTime}
+		</if>
+		<if test="endTime != null and endTime !=''">
+			AND ui.create_time <![CDATA[ <= ]]> #{endTime}
+		</if>
+		<if test="USER_TYPE != null and USER_TYPE !=''">
+			AND ui.USER_TYPE = #{USER_TYPE}
+		</if>
+		<if test="USER_NAME != null and USER_NAME !=''">
+			AND ui.USER_NAME = #{USER_NAME}
+		</if>
+		<if test="TELEPHONE != null and TELEPHONE !=''">
+			AND ui.TELEPHONE = #{TELEPHONE}
+		</if>
+		<if test="SERVICE_TIME != null and SERVICE_TIME !=''">
+			AND ui.SERVICE_TIME = #{SERVICE_TIME}
+		</if>
+		<if test="NAME5 != null and NAME5 !=''">
+			AND (a05.name like CONCAT('%',#{NAME5},'%') or a15.name like CONCAT('%',#{NAME5},'%'))
+		</if>
+		<if test="NAME6 != null and NAME6 !=''">
+			AND a06.name like CONCAT('%',#{NAME6},'%')
+		</if>
+		<if test="ACCURATE_ADDRESS != null and ACCURATE_ADDRESS !=''">
+			AND ui.ACCURATE_ADDRESS like CONCAT('%',#{ACCURATE_ADDRESS},'%')
+		</if>
+		ORDER BY NAME6,NAME5,ui.SERVICE_TIME DESC
+		<if test="offset != null and offset !='' and limit != null and limit !='' ">
+			LIMIT  ${offset},${limit}
+		</if>
+	</select>
+
+	<select id="queryUserListNum" resultType="int">
+		SELECT count(*)
+		FROM dhxh.t_user_info ui
+		left JOIN dhxh.t_address a06 ON a06.ID = ui.ADDRESS_ID AND a06.address_level =6
+		left JOIN dhxh.t_address a05 ON a05.ID = a06.PARENT_ID
+		left JOIN dhxh.t_address a04 ON a04.ID = a05.PARENT_ID
+		left JOIN dhxh.t_address a15 ON a15.ID = ui.ADDRESS_ID AND a15.address_level =5
+		left JOIN dhxh.t_address a14 ON a14.ID = a15.PARENT_ID
+		WHERE 1=1
+		<if test="beginTime != null and beginTime !=''">
+			AND ui.create_time>#{beginTime}
+		</if>
+		<if test="endTime != null and endTime !=''">
+			AND ui.create_time <![CDATA[ <= ]]> #{endTime}
+		</if>
+		<if test="USER_TYPE != null and USER_TYPE !=''">
+			AND ui.USER_TYPE = #{USER_TYPE}
+		</if>
+		<if test="USER_NAME != null and USER_NAME !=''">
+			AND ui.USER_NAME = #{USER_NAME}
+		</if>
+		<if test="TELEPHONE != null and TELEPHONE !=''">
+			AND ui.TELEPHONE = #{TELEPHONE}
+		</if>
+		<if test="SERVICE_TIME != null and SERVICE_TIME !=''">
+			AND ui.SERVICE_TIME = #{SERVICE_TIME}
+		</if>
+		<if test="NAME5 != null and NAME5 !=''">
+			AND (a05.name like CONCAT('%',#{NAME5},'%') or a15.name like CONCAT('%',#{NAME5},'%'))
+		</if>
+		<if test="NAME6 != null and NAME6 !=''">
+			AND a06.name like CONCAT('%',#{NAME6},'%')
+		</if>
+		<if test="ACCURATE_ADDRESS != null and ACCURATE_ADDRESS !=''">
+			AND ui.ACCURATE_ADDRESS = #{ACCURATE_ADDRESS}
+		</if>
+	</select>
+
+	<select id="queryAddressList" resultType="map">
+		SELECT a.ID,a.ADDRESS_LEVEL,a.NAME,a.PARENT_ID,a.TYPE,a.accurate_address,a.lng_lat,a.status
+		FROM dhxh.t_address a
+		where 1=1
+		<if test="NAME != null and NAME !=''">
+			AND a.NAME like concat('%',#{NAME},'%')
+		</if>
+		<if test="PARENT_ID != null and PARENT_ID !='' and PARENT_ID !=0 ">
+			AND a.PARENT_ID = #{PARENT_ID}
+		</if>
+		<if test="address_level != null and address_level !='' and address_level !=0 ">
+			AND a.address_level = #{address_level}
+		</if>
+		<if test="TYPE != null and TYPE !=''">
+			AND a.TYPE = #{TYPE}
+		</if>
+		ORDER BY a.ID asc
+		<if test="offset != null and offset !='' and limit != null and limit !='' ">
+			LIMIT  ${offset},${limit}
+		</if>
+	</select>
+
+	<select id="queryAddressListNum" resultType="int">
+		SELECT count(*)
+		FROM dhxh.t_address a
+		where 1=1
+		<if test="NAME != null and NAME !=''">
+			AND a.NAME like concat('%',#{NAME},'%')
+		</if>
+		<if test="address_level != null and address_level !='' and address_level !=0 ">
+			AND a.address_level = #{address_level}
+		</if>
+		<if test="PARENT_ID != null and PARENT_ID !='' and PARENT_ID!=0 ">
+			AND a.PARENT_ID = #{PARENT_ID}
+		</if>
+		<if test="TYPE != null and TYPE !=''">
+			AND a.TYPE = #{TYPE}
+		</if>
+
+	</select>
+
+	<select id="queryAddressTree" resultType="com.dhxh.guns.common.node.ZTreeNode">
+		SELECT a.ID as id,a.PARENT_ID pId,a.NAME as name,
+		(
+		CASE
+		WHEN (a.ADDRESS_LEVEL = 1 or a.PARENT_ID=-1) THEN
+			'true'
+		ELSE
+			'false'
+		END
+		) as isOpen
+		FROM dhxh.t_address a
+	</select>
+
+	<select id="getAddressByID" resultType="Map">
+		select a.ID,a.ADDRESS_LEVEL,a.PARENT_ID,a.NAME,a.TYPE,a.accurate_address,a.lng_lat,a.status
+		from dhxh.t_address a
+		where a.ID = #{ID}
+	</select>
+
+	<insert id="mergeAddress" parameterType="Map">
+		insert into dhxh.t_address(
+		<if test="ID != null and ID !=''">
+			ID,
+		</if>
+		ADDRESS_LEVEL,
+		PARENT_ID,
+		<if test="TYPE != null and TYPE !=''">
+		TYPE,
+		</if>
+		<if test="lng_lat != null and lng_lat !=''">
+			lng_lat,
+		</if>
+		<if test="accurate_address != null and accurate_address !=''">
+			accurate_address,
+		</if>
+		NAME
+		)
+		values (
+		<if test="ID != null and ID !=''">
+			#{ID},
+		</if>
+		#{ADDRESS_LEVEL},
+		#{PARENT_ID},
+		<if test="TYPE != null and TYPE !=''">
+			#{TYPE},
+		</if>
+		<if test="lng_lat != null and lng_lat !=''">
+			#{lng_lat},
+		</if>
+		<if test="accurate_address != null and accurate_address !=''">
+			#{accurate_address},
+		</if>
+		#{NAME}
+		)
+		on duplicate key update
+		PARENT_ID = #{PARENT_ID},
+		<if test="TYPE != null and TYPE !=''">
+			TYPE = #{TYPE},
+		</if>
+		NAME = #{NAME}
+	</insert>
+
+	<select id="queryActivityList" resultType="map">
+		SELECT concat(ui.id) id,ui.user_id,ui.open_id,ui.session_key,ui.nick_name,ui.user_name,ui.user_type,ui.status,ui.create_time,
+		ui.telephone,ui.user_pic,ui.address_id,a2.name name2,a3.name name3,a4.name name4,a5.name name5,ui.accurate_address,ui.gender,concat(ui.group_id) group_id,
+		case
+		when ui.service_time=1 then '06:00'
+		when ui.service_time=2 then '06:30'
+		when ui.service_time=3 then '07:00'
+		when ui.service_time=4 then '07:30'
+		when ui.service_time=5 then '08:00'
+		when ui.service_time=6 then '08:30'
+		when ui.service_time=7 then '09:00'
+		when ui.service_time=8 then '09:30'
+		when ui.service_time=9 then '10:00'
+		end as service_time,
+		if(us3.charge_status = 30,
+		if(
+		us3.charge_end_time>=now(),
+		if(
+		now()>us3.pause_begin_time and us3.pause_end_time>=now(),
+		21,
+		10
+		),
+		20
+		),
+		20
+		)AS trial_charge_status,
+		us3.create_time activity_time
+		FROM dhxh.t_user_info ui
+		inner join dhxh.t_user_service us3 on us3.user_id = ui.user_id and us3.service_type = 3
+		INNER JOIN dhxh.t_address a5 ON a5.ID = ui.ADDRESS_ID
+		left JOIN dhxh.t_address a4 ON a4.ID = a5.PARENT_ID
+		left JOIN dhxh.t_address a3 ON a3.ID = a4.PARENT_ID
+		left JOIN dhxh.t_address a2 ON a2.ID = a3.PARENT_ID
+		where 1=1
+		<if test="beginTime != null and beginTime !=''">
+			AND us3.create_time>#{beginTime}
+		</if>
+		<if test="endTime != null and endTime !=''">
+			AND us3.create_time <![CDATA[ <= ]]> #{endTime}
+		</if>
+		<if test="USER_NAME != null and USER_NAME !=''">
+			AND ui.USER_NAME = #{USER_NAME}
+		</if>
+		<if test="TELEPHONE != null and TELEPHONE !=''">
+			AND ui.TELEPHONE = #{TELEPHONE}
+		</if>
+		<if test="SERVICE_TIME != null and SERVICE_TIME !=''">
+			AND ui.SERVICE_TIME = #{SERVICE_TIME}
+		</if>
+		<if test="ACCURATE_ADDRESS != null and ACCURATE_ADDRESS !=''">
+			AND ui.ACCURATE_ADDRESS like CONCAT('%',#{ACCURATE_ADDRESS},'%')
+		</if>
+		ORDER BY ui.ACCURATE_ADDRESS,ui.SERVICE_TIME DESC
+		<if test="offset != null and offset !='' and limit != null and limit !='' ">
+			LIMIT  ${offset},${limit}
+		</if>
+	</select>
+
+	<select id="queryActivityListNum" resultType="int">
+		SELECT count(*)
+		FROM dhxh.t_user_info ui
+		inner join dhxh.t_user_service us3 on us3.user_id = ui.user_id and us3.service_type = 3
+		where 1=1
+		<if test="beginTime != null and beginTime !=''">
+			AND us3.create_time>#{beginTime}
+		</if>
+		<if test="endTime != null and endTime !=''">
+			AND us3.create_time <![CDATA[ <= ]]> #{endTime}
+		</if>
+		<if test="USER_NAME != null and USER_NAME !=''">
+			AND ui.USER_NAME = #{USER_NAME}
+		</if>
+		<if test="TELEPHONE != null and TELEPHONE !=''">
+			AND ui.TELEPHONE = #{TELEPHONE}
+		</if>
+		<if test="SERVICE_TIME != null and SERVICE_TIME !=''">
+			AND ui.SERVICE_TIME = #{SERVICE_TIME}
+		</if>
+		<if test="ACCURATE_ADDRESS != null and ACCURATE_ADDRESS !=''">
+			AND ui.ACCURATE_ADDRESS like CONCAT('%',#{ACCURATE_ADDRESS},'%')
+		</if>
+	</select>
+
+</mapper>

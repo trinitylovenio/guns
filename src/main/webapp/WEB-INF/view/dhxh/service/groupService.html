@@ -1,0 +1,42 @@
+@layout("/common/_container.html"){
+<div class="row">
+    <div class="col-sm-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>团购订单管理</h5>
+            </div>
+            <div class="ibox-content">
+                <div class="row row-lg">
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <#NameCon id="address_name" name="配送地点" />
+                                <#TimeCon id="beginTime" name="开始时间" isTime="true" pattern="YYYY-MM-DD hh:mm:ss"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <#SelectCon id="group_status" name="团购状态" >
+                                    <option value="">全部</option>
+                                    <option value="1">未成团</option>
+                                    <option value="2">已成团</option>
+                                    <option value="4">成团失败未退款</option>
+                                    <option value="5">成团失败已退款</option>
+                                </#SelectCon>
+                                <#TimeCon id="endTime" name="结束时间" isTime="true" pattern="YYYY-MM-DD hh:mm:ss"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <#NameCon id="user_name" name="团员姓名" />
+                                <#NameCon id="telephone" name="团员电话" />
+                            </div>
+                            <div class="col-sm-3">
+                                <#button name="搜索" icon="fa-search" clickFun="GroupService.search()"/>
+                            </div>
+                        </div>
+                        <#table id="groupServiceTable"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="${ctxPath}/static/modular/dhxh/service/groupService.js"></script>
+@}

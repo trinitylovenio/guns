@@ -1,0 +1,50 @@
+@layout("/common/_container.html"){
+<div class="ibox float-e-margins">
+	<div class="ibox-content">
+		<div class="form-horizontal" id="userInfoForm">
+
+			<div class="row">
+				<div class="col-sm-6 b-r">
+					<!--<#TimeCon id="DATE" name="日期" isTime="true" pattern="YYYY-MM-DD"/>-->
+					<#input id="standard_name" name="套餐名称" />
+					<#input id="standard_img" name="图片"/>
+
+					<#input id="STAPLE_FOOD_1" name="主食1" underline="true" hidden="STAPLE_FOOD_1_ID"
+					inputFun="StandardRecommendAdd.showFoodDemo('STAPLE_FOOD_1'); return false;" style="background-color: #ffffff !important;"/>
+
+
+					<#input id="NON_STAPLE_FOOD_1" name="副食1" underline="true" hidden="NON_STAPLE_FOOD_1_ID"
+					inputFun="StandardRecommendAdd.showFoodDemo('NON_STAPLE_FOOD_1'); return false;" style="background-color: #ffffff !important;"/>
+
+				</div>
+				<div class="col-sm-6">
+					<#input id="standard_desc" name="食品描述" underline="true"/>
+
+					<#input id="NON_STAPLE_FOOD_2" name="副食2" underline="true" hidden="NON_STAPLE_FOOD_2_ID"
+					inputFun="StandardRecommendAdd.showFoodDemo('NON_STAPLE_FOOD_2'); return false;" style="background-color: #ffffff !important;"/>
+
+					<#input id="DRINKS_1" name="饮料" underline="true" hidden="DRINKS_1_ID"
+					inputFun="StandardRecommendAdd.showFoodDemo('DRINKS_1'); return false;" style="background-color: #ffffff !important;"/>
+
+					<#input id="SNACKS_1" name="小吃（赠品）" underline="true" hidden="SNACKS_1_ID"
+					inputFun="StandardRecommendAdd.showFoodDemo('SNACKS_1'); return false;" style="background-color: #ffffff !important;"/>
+				</div>
+			</div>
+
+			<div id="menuContent" class="menuContent"
+				 style="display: none; position: absolute; z-index: 200;">
+				<ul id="foodDemo" class="ztree tree-box" style="width: 249px !important;"></ul>
+			</div>
+
+			<div class="row btn-group-m-t">
+				<div class="col-sm-10">
+					<#button btnCss="info" name="提交" id="ensure" icon="fa-check" clickFun="StandardRecommendAdd.addSubmit()"/>
+					<#button btnCss="danger" name="取消" id="cancel" icon="fa-eraser" clickFun="StandardRecommendAdd.close()"/>
+				</div>
+			</div>
+		</div>
+
+	</div>
+</div>
+<script src="${ctxPath}/static/modular/dhxh/food/standardRecommend_add.js"></script>
+@}

@@ -1,0 +1,59 @@
+@layout("/common/_container.html"){
+<div class="row">
+    <div class="col-sm-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>用户管理</h5>
+            </div>
+            <div class="ibox-content">
+                <div class="row row-lg">
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <div class="col-lg-2 col-sm-3">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">组织机构</div>
+                                    <div class="panel-body dept-tree">
+                                        <ul id="deptTree" class="ztree"></ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-10 col-sm-9">
+                                <div class="row">
+                                    <div class="col-lg-10 col-sm-9">
+                                        <div class="row">
+                                            <div class="col-lg-4 col-sm-12">
+                                                <#NameCon id="NAME" name="地址" placeholder=""/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-2 col-sm-3">
+                                        <div class="row">
+                                            <div class="col-lg-12 col-sm-12">
+                                                <#button name="搜索" icon="fa-search" clickFun="Address.search()"/>
+                                                <#button name="重置" icon="fa-trash" clickFun="Address.resetSearch()" space="true"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="hidden-xs" id="managerTableToolbar" role="group">
+                                    @if(shiro.hasPermission("/mgr/add")){
+                                    <#button name="添加" icon="fa-plus" clickFun="Address.openAddMgr()"/>
+                                    @}
+                                    @if(shiro.hasPermission("/mgr/edit")){
+                                    <#button name="修改" icon="fa-edit" clickFun="Address.openChangeUser()" space="true"/>
+                                    @}
+                                    @if(shiro.hasPermission("/mgr/delete")){
+                                    <#button name="删除" icon="fa-remove" clickFun="Address.delMgrUser()" space="true"/>
+                                    @}
+                                </div>
+                                <#table id="addressTable"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="${ctxPath}/static/modular/dhxh/user/address.js"></script>
+@}

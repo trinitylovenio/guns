@@ -1,0 +1,58 @@
+@layout("/common/_container.html"){
+<div class="ibox float-e-margins">
+	<div class="ibox-content">
+		<div class="form-horizontal" id="userInfoForm">
+
+			<div class="row">
+				<div class="col-sm-6">
+					<input type="hidden" id="ID" value="${ID}"/>
+					<input type="hidden" id="TYPE" value="${TYPE}"/>
+					<input type="hidden" id="ADDRESS_LEVEL" value="${ADDRESS_LEVEL}"/>
+					<input type="hidden" id="STATUS_OLD" value="${status}"/>
+					<#input id="ADDRESS_NAME" name="地址名称" underline="true" value="${NAME}"/>
+					<div id="TYPE_BOX" hidden="hidden">
+						<#Select id="ADDRESS_TYPE" name="类型(只有大厦/小区需要选)">
+							<option value="">null</option>
+							<option value="0">大厦</option>
+							<option value="1">小区</option>
+						</#Select>
+					</div>
+					<div id="STATUS_BOX" hidden="hidden">
+						<#Select id="status" name="状态" >
+							<option value="1">可配送</option>
+							<option value="2">暂停配送</option>
+						</#Select>
+					</div>
+				</div>
+				<div class="col-sm-6">
+					<div id="ACCURATE_BOX" hidden="hidden">
+						<#input id="accurate_address" name="门牌号（公司必填）" value="${accurate_address}" underline="true"/>
+					</div>
+					<div id="driverInfoContent">
+						<#input id="citySel" name="父级地址(请谨慎修改)" underline="true" readonly="readonly" hidden="deptid" hiddenValue="${PARENT_ID}" value="${PARENT_NAME}"
+								clickFun="AddressEdit.showDeptSelectTree(); return false;"
+								style="background-color: #ffffff !important;"/>
+
+					</div>
+					<#input id="lng_lat" name="经纬度(大厦/小区必填)" value="${lng_lat}" underline="true"/>
+				</div>
+			</div>
+
+			<!-- 这是部门选择的下拉框 -->
+			<div id="menuContent" class="menuContent"
+				style="display: none; position: absolute; z-index: 200;">
+				<ul id="treeDemo" class="ztree tree-box" style="width: 249px !important;"></ul>
+			</div>
+
+			<div class="row btn-group-m-t">
+				<div class="col-sm-10">
+					<#button btnCss="info" name="提交" id="ensure" icon="fa-check" clickFun="AddressEdit.editSubmit()"/>
+					<#button btnCss="danger" name="取消" id="cancel" icon="fa-eraser" clickFun="AddressEdit.close()"/>
+				</div>
+			</div>
+		</div>
+
+	</div>
+</div>
+<script src="${ctxPath}/static/modular/dhxh/user/address_edit.js"></script>
+@}
